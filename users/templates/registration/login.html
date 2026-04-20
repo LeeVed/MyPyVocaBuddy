@@ -1,0 +1,53 @@
+{% extends "common/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Login" %}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+        <div class="card shadow-sm border-0 rounded-4" style="background-color: #ffffff;">
+            <div class="card-body p-5">
+                <div class="text-center mb-4">
+                    <span style="font-size: 3rem;">🐍</span>
+                    <h2 class="mt-2 text-success">{% trans "Login to account" %}</h2>
+                    <p class="text-muted">{% trans "Log in to continue learning" %}</p>
+                </div>
+
+                <form method="post">
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+                        <label for="id_username" class="form-label">{% trans "Username" %}</label>
+                        <input type="text" name="username" id="id_username" class="form-control"
+                               placeholder="{% trans 'Enter username' %}" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="id_password" class="form-label">{% trans "Password" %}</label>
+                        <input type="password" name="password" id="id_password" class="form-control"
+                               placeholder="{% trans 'Enter password' %}" required>
+                    </div>
+
+                    {% if form.errors %}
+                        <div class="alert alert-danger">
+                            {% trans "Invalid username or password. Please try again." %}
+                        </div>
+                    {% endif %}
+
+                    <button type="submit" class="btn btn-success w-100 py-2 mt-2">
+                        🔐 {% trans "Login" %}
+                    </button>
+                </form>
+
+                <div class="text-center mt-4">
+                    <p class="text-muted">
+                        {% trans "Don't have an account?" %}
+                        <a href="{% url 'register' %}" class="text-success text-decoration-none">{% trans "Register" %}</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
