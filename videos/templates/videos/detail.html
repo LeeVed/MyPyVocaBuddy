@@ -1,0 +1,105 @@
+{% extends "common/base.html" %}
+{% load i18n %}
+
+{% block title %}{{ video.title }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12 mb-4">
+        <a href="{% url 'videos:list' %}" class="btn btn-outline-secondary">
+            ← {% trans "Back to list" %}
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <h1 class="display-5 text-success">{{ video.title }}</h1>
+        {% if video.speaker %}
+            <p class="text-muted">🎙️ {% trans "Speaker:" %} {{ video.speaker }}</p>
+        {% endif %}
+    </div>
+</div>
+
+{# ВИДЕО ДЛЯ ВСЕХ #}
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="ratio ratio-16x9 shadow-sm rounded-4 overflow-hidden">
+            <iframe src="{{ video.youtube_embed_url }}"
+                    title="{{ video.title }}"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen>
+            </iframe>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5>📝 {% trans "Description" %}</h5>
+                <p>{{ video.description|linebreaks }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+{# Блок добавления слов #}
+{% if video.words.exists %}
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5>📚 {% trans "Words from video" %}</h5>
+                <div class="d-flex flex-wrap gap-2 mt-2">
+                    {% for word in video.words.all %}
+                        <span class="badge bg-info text-dark p-2">
+                            {{ word.term }}
+                        </span>
+                    {% endfor %}
+                </div>
+
+                {% if is_premium_user %}
+                    <button class="btn btn-outline-success mt-3" onclick="addWordsToVocabulary()">
+                        ➕ {% trans "Add all words to my vocabulary" %}
+                    </button>
+                {% else %}
+                    <div class="alert alert-warning mt-3 mb-0">
+                        💡 {% trans "Premium users can add words from videos to their vocabulary for learning." %}
+                        <button type="button" class="btn btn-link p-0 ms-2" data-bs-toggle="modal" data-bs-target="#premiumModal">
+                            {% trans "Learn more" %} →
+                        </button>
+                    </div>
+                    {# Модальное окно Premium — только здесь, для Free #}
+                    {% include 'videos/premium_modal.html' %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function addWordsToVocabulary() {
+        fetch("{% url 'videos:add_words' video.pk %}", {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert(data.message);
+            } else {
+                alert('{% trans "Error:" %} ' + data.error);
+            }
+        });
+    }
+</script>
+{% endblock %}
