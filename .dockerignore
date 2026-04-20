@@ -10,6 +10,16 @@ test_db.sqlite3
 .coverage
 htmlcov
 .github
-nginx
 README.md
 .env.sample
+*.log
+*.pid
+*.seed
+*.pid.lock
+*.db
+*.sqlite3
+media/
+staticfiles/
+Dockerfile
+docker-compose.yml
+.dockerignore
