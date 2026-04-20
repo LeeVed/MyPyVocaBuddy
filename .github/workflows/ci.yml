@@ -1,0 +1,152 @@
+name: Django CI/CD
+
+on: [push, pull_request]
+
+jobs:
+  # запуск линтеров
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      # получаем код из репозитория
+      - name: Check out code
+        uses: actions/checkout@v4
+      # устанавливаем python нужной версии
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      # устанавливаем Poetry
+      - name: Install Poetry
+        run: |
+          curl -sSL https://install.python-poetry.org | python3 -
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+      # устанавливаем зависимости
+      - name: Install dependencies
+        run: poetry install --no-interaction --no-root
+      # устанавливаем flake8
+      - name: Run flake8
+        run: poetry run flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+  # запуск тестов
+  test:
+    # только после успешного запуска линтеров
+    needs: lint
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: test_user
+          POSTGRES_PASSWORD: test_pass
+          POSTGRES_DB: test_db
+        ports:
+          - 5432:5432
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: --health-cmd "redis-cli ping" --health-interval 10s --health-timeout 5s --health-retries 5
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Poetry
+        run: |
+          curl -sSL https://install.python-poetry.org | python3 -
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+      - name: Install dependencies
+        run: poetry install --no-interaction --no-root
+
+      - name: Run tests with coverage
+        env:
+          SECRET_KEY: "django-insecure-temporary-key-for-ci-testing"
+          DEBUG: "True"
+          DB_NAME: test_db
+          DB_USER: test_user
+          DB_PASSWORD: test_pass
+          DB_HOST: localhost
+          DB_PORT: 5432
+          REDIS_URL: redis://localhost:6379
+          CELERY_TASK_TRACK_STARTED: "True"
+          CELERY_TASK_TIME_LIMIT: "1800"
+        run: poetry run pytest -v --cov=. --cov-report=term-missing
+
+  # сборка докер-образа
+  build:
+    # только после успешных тестов
+    needs: test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+      # авторизация в docker hub через секреты
+      - name: Log in in Docker hub
+        run: echo ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }} | docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
+      # собираем докер-образ на основе последнего коммита
+      - name: Build Docker image
+        run: docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/mypyvocabuddy:${{ github.sha }} .
+      # отправка собранного образа в docker hub
+      - name: Push Docker image to Docker hub
+        run: docker push ${{ secrets.DOCKER_HUB_USERNAME }}/mypyvocabuddy:${{ github.sha }}
+
+      - name: Tag as latest
+        run: |
+            docker tag ${{ secrets.DOCKER_HUB_USERNAME }}/mypyvocabuddy:${{ github.sha }} ${{ secrets.DOCKER_HUB_USERNAME }}/mypyvocabuddy:latest
+            docker push ${{ secrets.DOCKER_HUB_USERNAME }}/mypyvocabuddy:latest
+
+  deploy:
+    # только после успешной сборки docker-образа
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Set up SSH
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Deploy to Yandex Cloud VM
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.VM_IP }} << "EOF"
+          # Переход в папку проекта на сервере
+          cd ~/MyPyVocaBuddy || git clone https://github.com/${{ github.repository }}.git ~/MyPyVocaBuddy
+          cd ~/MyPyVocaBuddy
+          # Получение последней версии кода
+          git pull 
+          
+          # Создание .env файла из секретов
+          echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" > .env
+          echo "DEBUG=False" >> .env
+          echo "ALLOWED_HOSTS=${{ secrets.VM_IP }},localhost" >> .env
+          echo "DB_NAME=mypyvocabuddy" >> .env
+          echo "DB_USER=postgres" >> .env
+          echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
+          echo "DB_HOST=db" >> .env
+          echo "DB_PORT=5432" >> .env
+          echo "REDIS_URL=redis://redis:6379/0" >> .env
+          echo "CELERY_BROKER_URL=redis://redis:6379/0" >> .env
+          echo "CELERY_RESULT_BACKEND=redis://redis:6379/1" >> .env
+          echo "CELERY_TASK_TRACK_STARTED=True" >> .env
+          echo "CELERY_TASK_TIME_LIMIT=1800" >> .env
+          
+          # Создание папки для секретов
+          mkdir -p secrets
+          
+          # Перезапуск контейнеров
+          docker-compose down
+          docker-compose pull
+          docker-compose up -d --build
+          
+          # Очистка старых образов
+          docker system prune -f
+          EOF

@@ -1,0 +1,15 @@
+.git
+.gitignore
+.env
+venv
+__pycache__
+*.pyc
+test_db.sqlite3
+.idea
+.pytest_cache
+.coverage
+htmlcov
+.github
+nginx
+README.md
+.env.sample
