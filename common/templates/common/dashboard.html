@@ -1,0 +1,134 @@
+{% extends "common/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Dashboard" %}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12 text-center mb-4">
+        <h1 class="display-5 text-success">🐍 {% trans "You are welcome," %} {{ user.username }}!</h1>
+        <p class="lead">{% trans "Your Personal Python Vocabulary" %}</p>
+    </div>
+</div>
+
+{# Статистика #}
+<div class="row g-4 mb-5">
+    <div class="col-md-3">
+        <div class="card text-center shadow-sm h-100 border-success">
+            <div class="card-body">
+                <h2 class="display-4 text-success">{{ total_words }}</h2>
+                <p class="text-muted mb-0">📚 {% trans "Total Terms" %}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center shadow-sm h-100 border-primary">
+            <div class="card-body">
+                <h2 class="display-4 text-primary">{{ new_words }}</h2>
+                <p class="text-muted mb-0">🆕 {% trans "New Terms" %}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center shadow-sm h-100 border-warning">
+            <div class="card-body">
+                <h2 class="display-4 text-warning">{{ to_review }}</h2>
+                <p class="text-muted mb-0">🔄 {% trans "Terms to review" %}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center shadow-sm h-100 border-info">
+            <div class="card-body">
+                <h2 class="display-4 text-info">{{ learned_words }}</h2>
+                <p class="text-muted mb-0">✅ {% trans "Learned Terms" %}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+{# Фильтр по темам #}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <div class="d-flex flex-wrap align-items-center gap-3">
+                    <div class="me-2">
+                        <span class="fs-4">🔍</span>
+                        <strong class="ms-1">{% trans "Filter by Topic" %}</strong>
+                    </div>
+                    <div class="flex-grow-1">
+                        <select class="form-select w-auto d-inline-block" id="categoryFilter" onchange="filterByCategory()">
+                            <option value="">📚 {% trans "All Topics" %}</option>
+                            {% for category in categories %}
+                                <option value="{{ category.slug }}" {% if selected_category_slug == category.slug %}selected{% endif %}>
+                                    {{ category.name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    {% if selected_category_name %}
+                        <div class="text-muted">
+                            📖 {% trans "Showing terms from topic:" %} <strong>{{ selected_category_name }}</strong>
+                            <a href="{% url 'common:dashboard' %}" class="btn btn-sm btn-outline-secondary ms-2">✖ {% trans "Restore" %}</a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{# Блок "Видео дня" #}
+<div class="row mb-5">
+    <div class="col-12">
+        <div class="card shadow-sm border-success">
+            <div class="card-header bg-success text-white">
+                <h4 class="mb-0">🎬 {% trans "Video of the Day" %}</h4>
+            </div>
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-md-4 text-center">
+                        <span style="font-size: 4rem;">📺</span>
+                    </div>
+                    <div class="col-md-8">
+                        <h5>{% trans "Learn Python with video" %}</h5>
+                        <p class="text-muted">{% trans "Watch videos in English, shadow the speaker, and expand your vocabulary with new terms." %}</p>
+                        <a href="{% url 'videos:list' %}" class="btn btn-outline-success">
+                            🎬 {% trans "Video Library" %}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{# Кнопки действий #}
+<div class="row text-center">
+    <div class="col-md-6 mb-3">
+        <a href="{% url 'common:review' %}?category={{ selected_category_slug|default:'' }}" class="btn btn-success btn-lg w-100 py-3">
+            🔄 {% trans "Start Practice" %}
+        </a>
+    </div>
+    <div class="col-md-6 mb-3">
+        <a href="{% url 'common:word_list' %}?category={{ selected_category_slug|default:'' }}" class="btn btn-outline-success btn-lg w-100 py-3">
+            📖 {% trans "My Terms" %}
+        </a>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function filterByCategory() {
+        const select = document.getElementById('categoryFilter');
+        const selectedSlug = select.value;
+        let url = "{% url 'common:dashboard' %}";
+        if (selectedSlug) {
+            url += "?category=" + selectedSlug;
+        }
+        window.location.href = url;
+    }
+</script>
+{% endblock %}

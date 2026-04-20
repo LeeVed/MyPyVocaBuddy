@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    {% load i18n %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyPyVocaBuddy - {% block title %}{% trans "Learn Python terms" %}{% endblock %}</title>
+
+    {# Подключаем Bootstrap через django-bootstrap5 #}
+    {% load bootstrap5 %}
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+
+    {# Дополнительные стили #}
+    {% block extra_css %}
+    <style>
+        body {
+            background-color: #e8f5e9;  /* Бледно-зелёный фон */
+        }
+        .navbar-brand {
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+        .navbar-brand img {
+            height: 35px;
+            width: auto;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+        footer {
+            background-color: #c8e6c9 !important;  /* Тёмнее бледно-зелёного для футера */
+        }
+    </style>
+    {% endblock %}
+</head>
+<body>
+    {# Навигационная панель #}
+    <nav class="navbar navbar-expand-lg navbar-dark bg-success">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'common:home' %}">
+                <span style="font-size: 1.8rem;">🐍</span>
+                MyPyVocaBuddy
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    {% if user.is_authenticated %}
+                        {# Студенты видят учебные разделы #}
+                        {% if user.role == 'student' %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'common:dashboard' %}">📖 {% trans "My Vocabulary" %}</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'common:word_list' %}">📋 {% trans "My terms" %}</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'videos:list' %}">🎬 {% trans "Video library" %}</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'common:review' %}">🔄 {% trans "Review" %}</a>
+                            </li>
+                        {% else %}
+                            {# Модератор и администратор видят только админку #}
+                            <li class="nav-item">
+                                <a class="nav-link" href="/admin/">⚙️ {% trans "Admin panel" %}</a>
+                            </li>
+                        {% endif %}
+
+                        {# Кнопка выхода для всех авторизованных #}
+                        <li class="nav-item">
+                            <form method="post" action="{% url 'logout' %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-link nav-link">🚪 {% trans "Logout" %}</button>
+                            </form>
+                        </li>
+                    {% else %}
+                        {# Неавторизованные пользователи #}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'login' %}">🔐 {% trans "Login" %}</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'register' %}">📝 {% trans "Register" %}</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    {# Основной контент #}
+    <main class="py-4">
+        <div class="container">
+            {% block content %}
+            {% endblock %}
+        </div>
+    </main>
+
+    {# Футер (подвал) #}
+    <footer class="text-center text-muted py-3 mt-5" style="background-color: #c8e6c9;">
+        <div class="container">
+            <p class="mb-0">🐍 © 2025 MyPyVocaBuddy. {% trans "Your smart Python dictionary is always with you" %}</p>
+            <p class="mb-0 small mt-1">
+                <a href="#" class="text-decoration-none text-muted">📧 {% trans "Feedback" %}</a>
+            </p>
+        </div>
+    </footer>
+
+    {# Блок для дополнительных скриптов #}
+    {% block extra_js %}{% endblock %}
+    <script type="module">
+      // Импортируем необходимые функции Firebase
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-app.js";
+      import { getMessaging, getToken } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-messaging.js";
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyDzl27PgyWfG8lNZcxUjo4ceD8bIMmfwtg",
+        authDomain: "mypyvocabuddy.firebaseapp.com",
+        projectId: "mypyvocabuddy",
+        storageBucket: "mypyvocabuddy.firebasestorage.app",
+        messagingSenderId: "874445385138",
+        appId: "1:874445385138:web:a0d9174b056b83f017c8ab"
+      };
+
+      // Инициализируем Firebase
+      const app = initializeApp(firebaseConfig);
+      const messaging = getMessaging(app);
+
+      // Функция для запроса разрешения и отправки токена
+      function registerForPushNotifications() {
+        // Проверяем, авторизован ли пользователь
+        const isAuthenticated = {{ user.is_authenticated|yesno:"true,false" }};
+        if (!isAuthenticated) {
+            console.log("Пользователь не авторизован, регистрация токена отложена.");
+            return;
+        }
+
+        Notification.requestPermission().then((permission) => {
+          if (permission === 'granted') {
+            console.log('Разрешение на уведомления получено.');
+
+            // VAPID ключ из настроек проекта Firebase (Web Push certificates)
+            getToken(messaging, { vapidKey: 'BHZnURlLoa4IWedL-Rqdhvhlf8yBFGkyLXvFb1olwu_aVsKcBk-uOgFp6j7vSzsjmFJ_a_SF6bqkf-AD9S98e8E' }).then((currentToken) => {
+              if (currentToken) {
+                // Отправляем токен на сервер
+                fetch('/api/register-device/', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken') // Функция getCookie нужна для CSRF защиты
+                  },
+                  body: JSON.stringify({
+                    'token': currentToken,
+                    'type': 'web'
+                  })
+                }).then(response => response.json())
+                  .then(data => console.log('Токен зарегистрирован:', data));
+              } else {
+                console.log('Не удалось получить регистрационный токен.');
+              }
+            }).catch((err) => {
+              console.log('Ошибка получения токена: ', err);
+            });
+          } else {
+            console.log('Разрешение на уведомления не получено.');
+          }
+        });
+      }
+
+      // Функция для получения CSRF-токена (нужна для безопасности)
+      function getCookie(name) {
+          let cookieValue = null;
+          if (document.cookie && document.cookie !== '') {
+              const cookies = document.cookie.split(';');
+              for (let i = 0; i < cookies.length; i++) {
+                  const cookie = cookies[i].trim();
+                  if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                      cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                      break;
+                  }
+              }
+          }
+          return cookieValue;
+      }
+
+      // Запускаем регистрацию, когда страница загрузится
+      window.onload = function() {
+        setTimeout(registerForPushNotifications, 5000); // Небольшая задержка на 5 секунд
+      };
+    </script>
+</body>
+</html>
