@@ -18,12 +18,14 @@ ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
 import firebase_admin
 from firebase_admin import credentials
 
-FIREBASE_CREDENTIALS = os.path.join(BASE_DIR, os.getenv("GOOGLE_APPLICATION_CREDENTIALS", ""))
+FIREBASE_CREDENTIALS = os.getenv("GOOGLE_APPLICATION_CREDENTIALS", "")
 
-if FIREBASE_CREDENTIALS and os.path.exists(FIREBASE_CREDENTIALS):
-    if not firebase_admin._apps:
-        cred = credentials.Certificate(FIREBASE_CREDENTIALS)
-        firebase_admin.initialize_app(cred)
+if FIREBASE_CREDENTIALS:
+    cred_path = os.path.join(BASE_DIR, FIREBASE_CREDENTIALS)
+    if os.path.isfile(cred_path):
+        if not firebase_admin._apps:
+            cred = credentials.Certificate(cred_path)
+            firebase_admin.initialize_app(cred)
 
 
 INSTALLED_APPS = [
