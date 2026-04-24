@@ -1,0 +1,81 @@
+{% extends "common/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Video library" %}{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12 text-center">
+        <h1 class="display-5 text-success">🎬 {% trans "Video library" %}</h1>
+        <p class="lead">{% trans "Watch videos and shadow the speakers" %}</p>
+    </div>
+</div>
+
+{# Фильтр по уровню — ТОЛЬКО ДЛЯ PREMIUM #}
+{% if is_premium_user %}
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
+        <div class="d-flex flex-wrap align-items-center gap-2">
+            <span class="fs-5 me-2">📊 {% trans "Filter by level:" %}</span>
+            <a href="{% url 'videos:list' %}"
+               class="btn btn-sm {% if not level_filter %}btn-success{% else %}btn-outline-secondary{% endif %}">
+                🌟 {% trans "All levels" %}
+            </a>
+            <a href="?level=beginner"
+               class="btn btn-sm {% if level_filter == 'beginner' %}btn-success{% else %}btn-outline-secondary{% endif %}">
+                🌱 {% trans "Beginner" %}
+            </a>
+            <a href="?level=intermediate"
+               class="btn btn-sm {% if level_filter == 'intermediate' %}btn-success{% else %}btn-outline-secondary{% endif %}">
+                📘 {% trans "Intermediate" %}
+            </a>
+            <a href="?level=advanced"
+               class="btn btn-sm {% if level_filter == 'advanced' %}btn-success{% else %}btn-outline-secondary{% endif %}">
+                🚀 {% trans "Advanced" %}
+            </a>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="alert alert-info mb-4">
+    ⭐ {% trans "Get Premium subscription to filter videos by level and add words from videos to your vocabulary!" %}
+</div>
+{% endif %}
+
+{# Список видео #}
+<div class="row g-4">
+    {% for video in videos %}
+        <div class="col-md-6 col-lg-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title">{{ video.title }}</h5>
+                    {% if video.speaker %}
+                        <p class="card-text text-muted small">
+                            🎙️ {{ video.speaker }}
+                        </p>
+                    {% endif %}
+                    <p class="card-text">{{ video.description|truncatechars:100 }}</p>
+                    <div class="d-flex justify-content-between align-items-center mt-3">
+                        <div>
+                            <span class="badge bg-secondary">{{ video.get_level_display }}</span>
+                            {% if video.duration %}
+                                <span class="badge bg-secondary ms-1">⏱️ {{ video.duration_minutes }}</span>
+                            {% endif %}
+                        </div>
+                        <span class="badge bg-success">🎬 {% trans "Video" %}</span>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent">
+                    <a href="{% url 'videos:detail' video.pk %}" class="btn btn-success w-100">
+                        🎬 {% trans "Watch" %}
+                    </a>
+                </div>
+            </div>
+        </div>
+    {% empty %}
+        <div class="col-12 text-center py-5">
+            <p class="text-muted">🎬 {% trans "No videos found." %}</p>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

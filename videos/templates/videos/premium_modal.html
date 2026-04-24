@@ -1,0 +1,53 @@
+{% load i18n %}
+
+<div class="modal fade" id="premiumModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-4 overflow-hidden">
+            <div class="modal-body p-0">
+                <div class="text-center p-4" style="background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);">
+                    <div class="premium-icon-animation mb-3">
+                        <span style="font-size: 5rem; display: inline-block;">⭐</span>
+                    </div>
+                    <h2 class="text-warning fw-bold">{% trans "Premium Access" %}</h2>
+                    <p class="lead mt-3">{% trans "Enhance your learning experience!" %}</p>
+                </div>
+
+                <div class="p-4">
+                    <h4>🚀 {% trans "What does Premium subscription offer?" %}</h4>
+                    <ul class="list-unstyled mt-3">
+                        <li class="mb-2">✅ <strong>{% trans "Add words" %}</strong> {% trans "from videos to your vocabulary" %}</li>
+                        <li class="mb-2">✅ <strong>{% trans "Filter videos" %}</strong> {% trans "by difficulty level" %}</li>
+                        <li class="mb-2">✅ <strong>{% trans "Create custom words" %}</strong> {% trans "with AI-generated images" %}</li>
+                        <li class="mb-2">✅ <strong>{% trans "Detailed statistics" %}</strong> {% trans "of pronunciation" %}</li>
+                        <li class="mb-2">✅ <strong>{% trans "Unlimited access" %}</strong> {% trans "to all features" %}</li>
+                    </ul>
+
+                    <div class="alert alert-success text-center mt-3">
+                        <span class="fs-4">🎉 {% trans "Special offer!" %}</span><br>
+                        {% trans "First month of Premium only" %} <strong>199₽</strong> {% trans "instead of 499₽" %}
+                    </div>
+
+                    <div class="d-grid gap-2 mt-4">
+                        <a href="{% url 'premium:info' %}" class="btn btn-warning btn-lg fw-bold">
+                            ⭐ {% trans "Get Premium" %}
+                        </a>
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                            🔙 {% trans "Later" %}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    @keyframes premiumBounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+    }
+
+    .premium-icon-animation {
+        animation: premiumBounce 0.5s ease-in-out;
+    }
+</style>

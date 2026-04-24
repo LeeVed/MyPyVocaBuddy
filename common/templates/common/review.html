@@ -1,0 +1,323 @@
+{% extends "common/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Terms to Review" %}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="text-center mb-4">
+            <h1 class="display-5 text-success">🔄 {% trans "Terms to Review" %}</h1>
+            <p class="lead" id="progressText">{% trans "Loading..." %}</p>
+        </div>
+
+        <!-- Выбор режима -->
+        <div class="d-flex justify-content-center gap-3 mb-4" id="modeSelector">
+            <button class="btn btn-outline-primary" onclick="setMode('show')">📖 {% trans "Show" %}</button>
+            <button class="btn btn-outline-success" onclick="setMode('write')">✏️ {% trans "Write" %}</button>
+            <button class="btn btn-outline-info" onclick="setMode('speak')">🎤 {% trans "Pronounce" %}</button>
+        </div>
+
+        <!-- Режим SHOW -->
+        <div id="showMode" class="review-mode" style="display: none;">
+            <div class="card shadow-lg border-0 rounded-4">
+                <div class="card-body p-4 p-md-5 text-center" id="showCard">
+                    <!-- Оборотная сторона (показывается первой) -->
+                    <div id="showBackSide">
+                        <div class="mb-4"><span style="font-size: 3rem;">📖</span></div>
+                        <h3 class="text-primary mb-3">{% trans "What does the term mean" %}</h3>
+                        <p class="lead mb-4" id="showDescription"></p>
+                        <div id="showImage"></div>
+                        <button id="showAnswerBtn" class="btn btn-success mt-4">👁️ {% trans "Show" %}</button>
+                    </div>
+                    <!-- Лицевая сторона (после нажатия "Посмотреть") -->
+                    <div id="showFrontSide" style="display: none;">
+                        <button id="showAudioBtn" class="btn btn-outline-secondary mb-3">🔊 {% trans "Listen" %}</button>
+                        <h2 class="display-5 text-primary mb-3" id="showTerm"></h2>
+                        <p class="text-muted mb-4" id="showTranscription"></p>
+                        <div id="showFrontImage"></div>
+                        <div class="d-flex justify-content-center gap-3 mt-4">
+                            <button class="btn btn-success" onclick="handleResult('know')">✅ {% trans "Know" %}</button>
+                            <button class="btn btn-warning" onclick="handleResult('doubt')">🤔 {% trans "Doubt" %}</button>
+                            <button class="btn btn-danger" onclick="handleResult('dont_know')">❌ {% trans "Don't know" %}</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Режим WRITE -->
+        <div id="writeMode" class="review-mode" style="display: none;">
+            <div class="card shadow-lg border-0 rounded-4">
+                <div class="card-body p-4 p-md-5 text-center">
+                    <div class="mb-4"><span style="font-size: 3rem;">✏️</span></div>
+                    <h3 class="text-primary mb-3">{% trans "Write the term" %}</h3>
+                    <p class="lead mb-4" id="writeDescription"></p>
+                    <div id="writeImage"></div>
+                    <input type="text" id="answerInput" class="form-control form-control-lg mb-3"
+                           placeholder="{% trans 'Enter the term in English' %}" autocomplete="off">
+                    <button id="checkWriteBtn" class="btn btn-success btn-lg">✅ {% trans "Check" %}</button>
+                    <div id="writeResult" class="mt-3" style="display: none;">
+                        <div id="writeFeedbackIcon" class="d-inline-block"></div>
+                        <span id="writeFeedbackText" class="ms-2"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Режим SPEAK -->
+        <div id="speakMode" class="review-mode" style="display: none;">
+            <div class="card shadow-lg border-0 rounded-4">
+                <div class="card-body p-4 p-md-5 text-center">
+                    <div class="mb-4"><span style="font-size: 3rem;">🎤</span></div>
+                    <h3 class="text-primary mb-3">{% trans "Pronounce the term" %}</h3>
+                    <p class="lead mb-4" id="speakDescription"></p>
+                    <div id="speakImage"></div>
+                    <button id="recordBtn" class="btn btn-primary btn-lg mt-3">🎤 {% trans "Record" %}</button>
+                    <div id="speechResult" class="mt-3" style="display: none;">
+                        <div id="feedbackIcon" class="d-inline-block"></div>
+                        <span id="feedbackText" class="ms-2"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    let currentWordId = null;
+    let currentMode = 'show';
+    let currentAudio = null;
+
+    function setMode(mode) {
+        currentMode = mode;
+        document.getElementById('showMode').style.display = mode === 'show' ? 'block' : 'none';
+        document.getElementById('writeMode').style.display = mode === 'write' ? 'block' : 'none';
+        document.getElementById('speakMode').style.display = mode === 'speak' ? 'block' : 'none';
+
+        // Загружаем текущее слово
+        loadCurrentWord();
+    }
+
+    function loadCurrentWord() {
+        fetch('/api/review/current-word/')
+            .then(response => response.json())
+            .then(data => {
+                if (data.word) {
+                    currentWordId = data.word.id;
+                    currentAudio = data.word.audio;
+                    document.getElementById('progressText').innerText = `{% trans "Term" %} ${data.current_index} {% trans "of" %} ${data.total_count}`;
+
+                    if (currentMode === 'show') {
+                        document.getElementById('showDescription').innerText = data.word.description || '';
+                        if (data.word.image) {
+                            document.getElementById('showImage').innerHTML = `<img src="${data.word.image}" class="img-fluid rounded-3 mt-3" style="max-height: 120px;">`;
+                        } else {
+                            document.getElementById('showImage').innerHTML = '';
+                        }
+                        // Сбрасываем карточку
+                        document.getElementById('showBackSide').style.display = 'block';
+                        document.getElementById('showFrontSide').style.display = 'none';
+                    } else if (currentMode === 'write') {
+                        document.getElementById('writeDescription').innerText = data.word.description || '';
+                        if (data.word.image) {
+                            document.getElementById('writeImage').innerHTML = `<img src="${data.word.image}" class="img-fluid rounded-3 mt-3" style="max-height: 120px;">`;
+                        } else {
+                            document.getElementById('writeImage').innerHTML = '';
+                        }
+                        document.getElementById('answerInput').value = '';
+                        document.getElementById('writeResult').style.display = 'none';
+                    } else if (currentMode === 'speak') {
+                        document.getElementById('speakDescription').innerText = data.word.description || '';
+                        if (data.word.image) {
+                            document.getElementById('speakImage').innerHTML = `<img src="${data.word.image}" class="img-fluid rounded-3 mt-3" style="max-height: 120px;">`;
+                        } else {
+                            document.getElementById('speakImage').innerHTML = '';
+                        }
+                        document.getElementById('speechResult').style.display = 'none';
+                    }
+                } else {
+                    alert('🎉 {{ "Congratulations! You\'ve learned the terms!"|escapejs }}');
+                    window.location.href = "{% url 'common:dashboard' %}";
+                }
+            })
+            .catch(error => {
+                console.error('Error loading word:', error);
+                alert('{{ "Error loading word. Please refresh the page."|escapejs }}');
+            });
+    }
+
+    // Режим SHOW
+    document.getElementById('showAnswerBtn')?.addEventListener('click', function() {
+        document.getElementById('showBackSide').style.display = 'none';
+        document.getElementById('showFrontSide').style.display = 'block';
+
+        // Загружаем лицевую сторону
+        fetch(`/api/review/word-detail/${currentWordId}/`)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('showTerm').innerText = data.term || '---';
+                document.getElementById('showTranscription').innerText = data.transcription || '';
+                if (data.image) {
+                    document.getElementById('showFrontImage').innerHTML = `<img src="${data.image}" class="img-fluid rounded-3 mt-3" style="max-height: 120px;">`;
+                } else {
+                    document.getElementById('showFrontImage').innerHTML = '';
+                }
+                currentAudio = data.audio;
+            })
+            .catch(error => {
+                console.error('Error loading word detail:', error);
+            });
+    });
+
+    document.getElementById('showAudioBtn')?.addEventListener('click', function() {
+        if (currentAudio) {
+            new Audio(currentAudio).play();
+        } else {
+            alert('{{ "Audio not available"|escapejs }}');
+        }
+    });
+
+    function handleResult(result) {
+        fetch('/api/review/process-result/', {
+            method: 'POST',
+            headers: {'X-CSRFToken': '{{ csrf_token }}', 'Content-Type': 'application/json'},
+            body: JSON.stringify({user_word_id: currentWordId, result: result})
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.session_complete) {
+                alert('🎉 {{ "Session is completed!"|escapejs }}');
+                window.location.href = "{% url 'common:dashboard' %}";
+            } else {
+                loadCurrentWord();
+            }
+        })
+        .catch(error => {
+            console.error('Error processing result:', error);
+        });
+    }
+
+    // Режим WRITE
+    document.getElementById('checkWriteBtn')?.addEventListener('click', function() {
+        const answer = document.getElementById('answerInput').value.trim();
+        if (!answer) {
+            alert('{{ "Please enter a term"|escapejs }}');
+            return;
+        }
+
+        fetch('/api/review/check-written/', {
+            method: 'POST',
+            headers: {'X-CSRFToken': '{{ csrf_token }}', 'Content-Type': 'application/json'},
+            body: JSON.stringify({user_word_id: currentWordId, answer: answer})
+        })
+        .then(response => response.json())
+        .then(data => {
+            const resultDiv = document.getElementById('writeResult');
+            resultDiv.style.display = 'block';
+            if (data.is_correct) {
+                document.getElementById('writeFeedbackIcon').innerHTML = '<span style="font-size: 2rem;">🟢</span>';
+                document.getElementById('writeFeedbackText').innerHTML = '✓ {{ "Great!"|escapejs }}';
+                setTimeout(() => {
+                    resultDiv.style.display = 'none';
+                    handleResult('know');
+                }, 1500);
+            } else {
+                document.getElementById('writeFeedbackIcon').innerHTML = '<span style="font-size: 2rem;">🔴</span>';
+                document.getElementById('writeFeedbackText').innerHTML = '✗ {{ "Incorrect. This word will be reviewed later."|escapejs }}';
+                setTimeout(() => {
+                    resultDiv.style.display = 'none';
+                    handleResult('dont_know');
+                }, 2000);
+            }
+        })
+        .catch(error => {
+            console.error('Error checking answer:', error);
+        });
+    });
+
+    // Режим SPEAK
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    let recognition = null;
+    if (SpeechRecognition) {
+        recognition = new SpeechRecognition();
+        recognition.lang = 'en-US';
+        recognition.interimResults = false;
+        recognition.maxAlternatives = 1;
+    }
+
+    document.getElementById('recordBtn')?.addEventListener('click', function() {
+        if (!recognition) {
+            alert('{{ "Speech recognition unavailable."|escapejs }}');
+            return;
+        }
+
+        const recordBtn = document.getElementById('recordBtn');
+
+        recognition.start();
+        recordBtn.disabled = true;
+        recordBtn.innerHTML = '🎤 {{ "Listening..."|escapejs }}';
+
+        recognition.onresult = function(event) {
+            const spoken = event.results[0][0].transcript;
+            checkPronunciation(spoken);
+        };
+
+        recognition.onerror = function(event) {
+            recordBtn.disabled = false;
+            recordBtn.innerHTML = '🎤 {{ "Record"|escapejs }}';
+            console.error('Recognition error:', event.error);
+            alert('{{ "Recognition error"|escapejs }}: ' + event.error);
+        };
+
+        recognition.onend = function() {
+            recordBtn.disabled = false;
+            recordBtn.innerHTML = '🎤 {{ "Record"|escapejs }}';
+        };
+    });
+
+    function checkPronunciation(spoken) {
+        fetch('/api/review/check-pronunciation/', {
+            method: 'POST',
+            headers: {'X-CSRFToken': '{{ csrf_token }}', 'Content-Type': 'application/json'},
+            body: JSON.stringify({user_word_id: currentWordId, spoken_text: spoken})
+        })
+        .then(response => response.json())
+        .then(data => {
+            const resultDiv = document.getElementById('speechResult');
+            resultDiv.style.display = 'block';
+            if (data.is_correct) {
+                document.getElementById('feedbackIcon').innerHTML = '<span style="font-size: 2rem;">🟢</span>';
+                document.getElementById('feedbackText').innerHTML = '✓ {{ "Great!"|escapejs }}';
+                setTimeout(() => {
+                    resultDiv.style.display = 'none';
+                    handleResult('know');
+                }, 1500);
+            } else {
+                document.getElementById('feedbackIcon').innerHTML = '<span style="font-size: 2rem;">🔴</span>';
+                document.getElementById('feedbackText').innerHTML = '✗ {{ "Incorrect. This word will be reviewed later."|escapejs }}';
+                setTimeout(() => {
+                    resultDiv.style.display = 'none';
+                    handleResult('dont_know');
+                }, 2000);
+            }
+        })
+        .catch(error => {
+            console.error('Error checking pronunciation:', error);
+        });
+    }
+
+    // Обработка нажатия Enter в поле ввода
+    document.getElementById('answerInput')?.addEventListener('keypress', function(event) {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            document.getElementById('checkWriteBtn')?.click();
+        }
+    });
+
+    // Запуск
+    setMode('show');
+</script>
+{% endblock %}

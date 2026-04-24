@@ -1,0 +1,218 @@
+{% extends "common/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "My Terms" %}{% endblock %}
+
+{% block content %}
+
+{% if user.subscription_type == 'premium' %}
+<div class="row mb-4">
+    <div class="col-12 text-end">
+        <a href="{% url 'common:add_custom_word' %}" class="btn btn-success">
+            ✏️ {% trans "Add my Term" %}
+        </a>
+    </div>
+</div>
+{% endif %}
+
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="display-5 text-success">📖 {% trans "My Terms" %}</h1>
+        <p class="lead">{% trans "Total Terms" %} {{ total_count }}</p>
+    </div>
+</div>
+
+{# Статистика-карточки (быстрые фильтры) #}
+<div class="row g-3 mb-4">
+    <div class="col-md-2">
+        <a href="?status=all{% if selected_category_slug %}&category={{ selected_category_slug }}{% endif %}"
+           class="text-decoration-none">
+            <div class="card text-center shadow-sm {% if filter_status == 'all' %}border-success bg-success bg-opacity-10{% endif %}">
+                <div class="card-body">
+                    <h3 class="mb-0">{{ total_count }}</h3>
+                    <p class="text-muted mb-0">📚 {% trans "All Terms" %}</p>
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="col-md-2">
+        <a href="?status=new{% if selected_category_slug %}&category={{ selected_category_slug }}{% endif %}"
+           class="text-decoration-none">
+            <div class="card text-center shadow-sm {% if filter_status == 'new' %}border-primary bg-primary bg-opacity-10{% endif %}">
+                <div class="card-body">
+                    <h3 class="mb-0 text-primary">{{ new_count }}</h3>
+                    <p class="text-muted mb-0">🆕 {% trans "New Terms" %}</p>
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="col-md-2">
+        <a href="?status=review{% if selected_category_slug %}&category={{ selected_category_slug }}{% endif %}"
+           class="text-decoration-none">
+            <div class="card text-center shadow-sm {% if filter_status == 'review' %}border-warning bg-warning bg-opacity-10{% endif %}">
+                <div class="card-body">
+                    <h3 class="mb-0 text-warning">{{ review_count }}</h3>
+                    <p class="text-muted mb-0">🔄 {% trans "Terms to Review" %}</p>
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="col-md-2">
+        <a href="?status=learned{% if selected_category_slug %}&category={{ selected_category_slug }}{% endif %}"
+           class="text-decoration-none">
+            <div class="card text-center shadow-sm {% if filter_status == 'learned' %}border-info bg-info bg-opacity-10{% endif %}">
+                <div class="card-body">
+                    <h3 class="mb-0 text-info">{{ learned_count }}</h3>
+                    <p class="text-muted mb-0">✅ {% trans "Learned Terms" %}</p>
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="col-md-2">
+        <a href="?status=hidden{% if selected_category_slug %}&category={{ selected_category_slug }}{% endif %}"
+           class="text-decoration-none">
+            <div class="card text-center shadow-sm {% if filter_status == 'hidden' %}border-secondary bg-secondary bg-opacity-10{% endif %}">
+                <div class="card-body">
+                    <h3 class="mb-0 text-secondary">{{ hidden_count }}</h3>
+                    <p class="text-muted mb-0">🗑️ {% trans "Hidden Terms" %}</p>
+                </div>
+            </div>
+        </a>
+    </div>
+</div>
+
+{# Фильтр по темам #}
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
+        <div class="d-flex flex-wrap align-items-center gap-2">
+            <span class="fs-5 me-2">🏷️ {% trans "Filter by Topic:" %}</span>
+            <a href="?status={{ filter_status }}"
+               class="btn btn-sm {% if not selected_category_slug %}btn-success{% else %}btn-outline-secondary{% endif %}">
+                📚 {% trans "All Topics" %}
+            </a>
+            {% for category in categories %}
+                <a href="?status={{ filter_status }}&category={{ category.slug }}"
+                   class="btn btn-sm {% if selected_category_slug == category.slug %}btn-success{% else %}btn-outline-secondary{% endif %}">
+                    {{ category.name }}
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+{# Список слов #}
+<div class="row">
+    <div class="col-12">
+        <div class="list-group shadow-sm">
+            {% for user_word in user_words %}
+                <div class="list-group-item">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="mb-1">
+                                {{ user_word.display_term }}
+                                {% if user_word.is_new and not user_word.is_deleted_by_user %}
+                                    <span class="badge bg-primary ms-2">🆕 {% trans "New Term" %}</span>
+                                {% elif user_word.needs_review and not user_word.is_deleted_by_user %}
+                                    <span class="badge bg-warning text-dark ms-2">🔥 {% trans "Terms to Review" %}</span>
+                                {% elif user_word.is_learned and not user_word.is_deleted_by_user %}
+                                    <span class="badge bg-info ms-2">✅ {% trans "Learned Terms" %}</span>
+                                {% elif user_word.is_deleted_by_user %}
+                                    <span class="badge bg-secondary ms-2">🗑️ {% trans "Hidden Terms" %}</span>
+                                {% endif %}
+                            </h5>
+                            <p class="text-muted small mb-0">
+                                {{ user_word.display_description|truncatechars:80 }}
+                            </p>
+                            <small class="text-secondary">
+                                {% if user_word.word %}
+                                    📖 {{ user_word.word.category.name }}
+                                    {% if user_word.stage > 0 and not user_word.is_deleted_by_user %}
+                                        | 🔄 {% trans "Stage:" %} {{ user_word.stage }}/5
+                                    {% endif %}
+                                {% else %}
+                                    📖 {% trans "My Term" %}
+                                    {% if user_word.stage > 0 and not user_word.is_deleted_by_user %}
+                                        | 🔄 {% trans "Stage:" %} {{ user_word.stage }}/5
+                                    {% endif %}
+                                {% endif %}
+                            </small>
+                        </div>
+                        <div class="text-end">
+                            <span class="badge bg-secondary">
+                                {% if user_word.word %}
+                                    {{ user_word.word.get_difficulty_display }}
+                                {% else %}
+                                    {% trans "My Term" %}
+                                {% endif %}
+                            </span>
+                            {% if user.subscription_type == 'premium' %}
+                                {% if user_word.is_deleted_by_user %}
+                                    <button class="btn btn-sm btn-outline-success ms-2"
+                                            onclick="restoreWord({{ user_word.id }})"
+                                            title="Восстановить слово">
+                                        ↩️ {% trans "Reset" %}
+                                    </button>
+                                {% else %}
+                                    <button class="btn btn-sm btn-outline-danger ms-2"
+                                            onclick="hideWord({{ user_word.id }})"
+                                            title="Скрыть слово">
+                                        🗑️ {% trans "Hide" %}
+                                    </button>
+                                {% endif %}
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="alert alert-info text-center">
+                    <p class="mb-0">📭 {% trans "Your vocabulary is empty. Start by adding words from the Video Library." %}</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function hideWord(userWordId) {
+        if (confirm('{% trans "Hide this term? You can restore it later in settings." %}')) {
+            fetch(`/api/words/hide/${userWordId}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}',
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert('{% trans "Error:" %} ' + (data.error || '{% trans "Failed to hide term" %}'));
+                }
+            });
+        }
+    }
+
+    function restoreWord(userWordId) {
+        if (confirm('{% trans "Restore this term? It will reappear in your vocabulary." %}')) {
+            fetch(`/api/words/restore/${userWordId}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}',
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert('{% trans "Error:" %} ' + (data.error || '{% trans "Failed to restore term" %}'));
+                }
+            });
+        }
+    }
+</script>
+{% endblock %}

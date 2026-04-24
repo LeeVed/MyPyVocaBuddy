@@ -1,0 +1,58 @@
+{% extends "common/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "You are welcome!" %}{% endblock %}
+
+{% block content %}
+<div class="row align-items-center py-5">
+    <div class="col-lg-6">
+        <h1 class="display-4 fw-bold text-success">
+            <span style="font-size: 3rem;">🐍</span>
+            {% trans "Learn Python terms" %}<br>{% trans "effectively" %}
+        </h1>
+        <p class="lead text-muted my-4">
+            {% trans "Study Python terms with a scientifically proven spaced repetition system (SRS) and practice pronunciation by shadowing native video examples" %}
+        </p>
+        {% if not user.is_authenticated %}
+            <a href="{% url 'register' %}" class="btn btn-success btn-lg">🚀 {% trans "Start Practice" %}</a>
+        {% else %}
+            <a href="#" class="btn btn-success btn-lg">📖 {% trans "My vocabulary" %}</a>
+        {% endif %}
+    </div>
+    <div class="col-lg-6 text-center">
+        <div class="p-4 bg-white rounded-4 shadow-sm" style="background-color: #f1f8e9 !important;">
+            <span style="font-size: 8rem;">🐍</span>
+            <p class="text-muted mt-2 fw-bold">{% trans "Python — Programming Language" %}</p>
+            <div class="mt-3">
+                <span class="badge bg-success fs-6">#1</span>
+                <span class="badge bg-secondary fs-6">{% trans "Powerful" %}</span>
+                <span class="badge bg-info fs-6">{% trans "Easy to learn" %}</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row text-center my-5 py-5 rounded-4" style="background-color: #c8e6c9;">
+    <div class="col-md-4">
+        <div class="mb-3">
+            <span style="font-size: 2.5rem;">⏰</span>
+        </div>
+        <h3 class="text-success">{% trans "Spaced Repetition + Video" %}</h3>
+        <p>{% trans "Learn terms with science-based spaced repetition and improve your pronunciation with video shadowing" %}</p>
+    </div>
+    <div class="col-md-4">
+        <div class="mb-3">
+            <span style="font-size: 2.5rem;">📚</span>
+        </div>
+        <h3 class="text-success">{% trans "Dictionary by Topic" %}</h3>
+        <p>{% trans "Learn words grouped by Python concepts." %}</p>
+    </div>
+    <div class="col-md-4">
+        <div class="mb-3">
+            <span style="font-size: 2.5rem;">⭐</span>
+        </div>
+        <h3 class="text-success">{% trans "Premium Features" %}</h3>
+        <p>{% trans "Add your own words and generate images with AI." %}</p>
+    </div>
+</div>
+{% endblock %}

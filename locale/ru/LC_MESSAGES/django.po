@@ -1,0 +1,593 @@
+# Russian translations for MyPyVocaBuddy.
+# Copyright (C) 2025
+# This file is distributed under the same license as the MyPyVocaBuddy project.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: MyPyVocaBuddy 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-18 12:00+0000\n"
+"PO-Revision-Date: 2026-04-18 15:00+0300\n"
+"Last-Translator: <EMAIL@ADDRESS>\n"
+"Language-Team: Russian <ru@li.org>\n"
+"Language: ru\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+
+#: templates/common/base.html:7
+msgid "Learn Python terms"
+msgstr "Изучайте термины Python"
+
+#: templates/common/base.html:33
+msgid "My Vocabulary"
+msgstr "Мой словарь"
+
+#: templates/common/base.html:36
+msgid "My terms"
+msgstr "Мои термины"
+
+#: templates/common/base.html:39 templates/videos/list.html:4
+#: templates/videos/list.html:9
+msgid "Video library"
+msgstr "Видеотека"
+
+#: templates/common/base.html:42
+msgid "Review"
+msgstr "Повторение"
+
+#: templates/common/base.html:47
+msgid "Admin panel"
+msgstr "Админ-панель"
+
+#: templates/common/base.html:55
+msgid "Logout"
+msgstr "Выйти"
+
+#: templates/common/base.html:60 templates/registration/login.html:4
+#: templates/registration/login.html:38 templates/registration/register.html:52
+msgid "Login"
+msgstr "Войти"
+
+#: templates/common/base.html:63 templates/registration/login.html:42
+#: templates/registration/register.html:4 templates/registration/register.html:48
+msgid "Register"
+msgstr "Регистрация"
+
+#: templates/common/base.html:78
+msgid "Your smart Python dictionary is always with you"
+msgstr "Ваш умный словарь Python всегда с вами"
+
+#: templates/common/base.html:80
+msgid "Feedback"
+msgstr "Обратная связь"
+
+#: templates/common/home.html:4
+msgid "You are welcome!"
+msgstr "Добро пожаловать!"
+
+#: templates/common/home.html:11
+msgid "effectively"
+msgstr "эффективно"
+
+#: templates/common/home.html:14
+msgid ""
+"Study Python terms with a scientifically proven spaced repetition system "
+"(SRS) and practice pronunciation by shadowing native video examples"
+msgstr ""
+"Изучайте термины Python с научно обоснованной системой интервальных "
+"повторений (SRS) и тренируйте произношение, повторяя за видео носителей языка"
+
+#: templates/common/home.html:17 templates/common/dashboard.html:108
+msgid "Start Practice"
+msgstr "Начать обучение"
+
+#: templates/common/home.html:19
+msgid "My vocabulary"
+msgstr "Мой словарь"
+
+#: templates/common/home.html:24
+msgid "Python — Programming Language"
+msgstr "Python — язык программирования"
+
+#: templates/common/home.html:27
+msgid "Powerful"
+msgstr "Мощный"
+
+#: templates/common/home.html:28
+msgid "Easy to learn"
+msgstr "Легко в изучении"
+
+#: templates/common/home.html:37
+msgid "Spaced Repetition + Video"
+msgstr "Интервальные повторения + Видео"
+
+#: templates/common/home.html:38
+msgid ""
+"Learn terms with science-based spaced repetition and improve your "
+"pronunciation with video shadowing"
+msgstr ""
+"Изучайте термины с научным подходом SRS и улучшайте произношение с "
+"видео-имитацией"
+
+#: templates/common/home.html:44
+msgid "Dictionary by Topic"
+msgstr "Словарь по темам"
+
+#: templates/common/home.html:45
+msgid "Learn words grouped by Python concepts."
+msgstr "Изучайте слова, сгруппированные по темам Python."
+
+#: templates/common/home.html:51
+msgid "Premium Features"
+msgstr "Premium возможности"
+
+#: templates/common/home.html:52
+msgid "Add your own words and generate images with AI."
+msgstr "Добавляйте свои слова и генерируйте изображения через ИИ."
+
+#: templates/common/dashboard.html:4 templates/common/review_empty.html:4
+#: templates/common/word_list.html:4 templates/common/dashboard.html:113
+msgid "My Terms"
+msgstr "Мои термины"
+
+#: templates/common/dashboard.html:9
+msgid "You are welcome,"
+msgstr "Добро пожаловать,"
+
+#: templates/common/dashboard.html:10
+msgid "Your Personal Python Vocabulary"
+msgstr "Ваш персональный словарь Python"
+
+#: templates/common/dashboard.html:20 templates/common/word_list.html:19
+msgid "Total Terms"
+msgstr "Всего терминов"
+
+#: templates/common/dashboard.html:28 templates/common/word_list.html:38
+msgid "New Terms"
+msgstr "Новые термины"
+
+#: templates/common/dashboard.html:36
+msgid "Terms to review"
+msgstr "Термины на повторении"
+
+#: templates/common/dashboard.html:44 templates/common/word_list.html:67
+#: templates/common/word_list.html:97
+msgid "Learned Terms"
+msgstr "Выученные термины"
+
+#: templates/common/dashboard.html:57
+msgid "Filter by Topic"
+msgstr "Фильтр по теме"
+
+#: templates/common/dashboard.html:61 templates/common/word_list.html:82
+msgid "All Topics"
+msgstr "Все темы"
+
+#: templates/common/dashboard.html:71
+msgid "Showing terms from topic:"
+msgstr "Показываем термины из темы:"
+
+#: templates/common/dashboard.html:72
+msgid "Restore"
+msgstr "Восстановить"
+
+#: templates/common/dashboard.html:84
+msgid "Video of the Day"
+msgstr "Видео дня"
+
+#: templates/common/dashboard.html:93
+msgid "Learn Python with video"
+msgstr "Изучайте Python с видео"
+
+#: templates/common/dashboard.html:94
+msgid ""
+"Watch videos in English, shadow the speaker, and expand your vocabulary "
+"with new terms."
+msgstr ""
+"Смотрите видео на английском, повторяйте за спикером и пополняйте словарь "
+"новыми терминами."
+
+#: templates/common/dashboard.html:96
+msgid "Video Library"
+msgstr "Видеотека"
+
+#: templates/common/review.html:4 templates/common/review_empty.html:4
+#: templates/common/word_list.html:46 templates/common/word_list.html:95
+msgid "Terms to Review"
+msgstr "Термины для повторения"
+
+#: templates/common/review.html:10
+msgid "Loading..."
+msgstr "Загрузка..."
+
+#: templates/common/review.html:15 templates/common/review.html:30
+msgid "Show"
+msgstr "Показать"
+
+#: templates/common/review.html:16
+msgid "Write"
+msgstr "Написать"
+
+#: templates/common/review.html:17
+msgid "Pronounce"
+msgstr "Произнести"
+
+#: templates/common/review.html:26
+msgid "What does the term mean"
+msgstr "Что означает термин"
+
+#: templates/common/review.html:34
+msgid "Listen"
+msgstr "Слушать"
+
+#: templates/common/review.html:39
+msgid "Know"
+msgstr "Знаю"
+
+#: templates/common/review.html:40
+msgid "Doubt"
+msgstr "Сомневаюсь"
+
+#: templates/common/review.html:41
+msgid "Don't know"
+msgstr "Не знаю"
+
+#: templates/common/review.html:52
+msgid "Write the term"
+msgstr "Напишите термин"
+
+#: templates/common/review.html:56
+msgid "Enter the term in English"
+msgstr "Введите термин на английском"
+
+#: templates/common/review.html:57
+msgid "Check"
+msgstr "Проверить"
+
+#: templates/common/review.html:70
+msgid "Pronounce the term"
+msgstr "Произнесите термин"
+
+#: templates/common/review.html:73 templates/common/review.html:244
+msgid "Record"
+msgstr "Записать"
+
+#: templates/common/review.html:140
+msgid "Term"
+msgstr "Слово"
+
+#: templates/common/review.html:140
+msgid "of"
+msgstr "из"
+
+#: templates/common/review.html:164
+msgid "Congratulations! You've learned the terms!"
+msgstr "Поздравляем! Вы выучили все термины!"
+
+#: templates/common/review.html:190
+msgid "Session is completed!"
+msgstr "Сессия завершена!"
+
+#: templates/common/review.html:208 templates/common/review.html:263
+msgid "Great!"
+msgstr "Отлично!"
+
+#: templates/common/review.html:214 templates/common/review.html:269
+msgid "Incorrect. This word will be reviewed later."
+msgstr "Неправильно. Это слово будет повторено позже."
+
+#: templates/common/review.html:229
+msgid "Speech recognition unavailable."
+msgstr "Распознавание речи недоступно."
+
+#: templates/common/review.html:233
+msgid "Listening..."
+msgstr "Слушаю..."
+
+#: templates/common/review.html:240
+msgid "Recognition error"
+msgstr "Ошибка распознавания"
+
+#: templates/common/review_empty.html:9
+msgid "All caught up!"
+msgstr "Всё повторено!"
+
+#: templates/common/review_empty.html:10
+msgid "No more words for today. Come back tomorrow!"
+msgstr "На сегодня нет больше слов. Загляните завтра!"
+
+#: templates/common/review_empty.html:12
+msgid "← My Vocabulary"
+msgstr "← Мой словарь"
+
+#: templates/common/word_list.html:11
+msgid "Add my Term"
+msgstr "Добавить мой термин"
+
+#: templates/common/word_list.html:30
+msgid "All Terms"
+msgstr "Все термины"
+
+#: templates/common/word_list.html:57 templates/common/word_list.html:99
+msgid "Hidden Terms"
+msgstr "Скрытые термины"
+
+#: templates/common/word_list.html:76
+msgid "Filter by Topic:"
+msgstr "Фильтр по теме:"
+
+#: templates/common/word_list.html:93
+msgid "New Term"
+msgstr "Новый термин"
+
+#: templates/common/word_list.html:110 templates/common/word_list.html:114
+#: templates/common/word_list.html:125
+msgid "My Term"
+msgstr "Мой термин"
+
+#: templates/common/word_list.html:110 templates/common/word_list.html:116
+msgid "Stage:"
+msgstr "Этап:"
+
+#: templates/common/word_list.html:132
+msgid "Reset"
+msgstr "Восстановить"
+
+#: templates/common/word_list.html:137
+msgid "Hide"
+msgstr "Скрыть"
+
+#: templates/common/word_list.html:144
+msgid "Your vocabulary is empty. Start by adding words from the Video Library."
+msgstr "Ваш словарь пуст. Начните с добавления слов из видеотеки."
+
+#: templates/common/word_list.html:153
+msgid "Hide this term? You can restore it later in settings."
+msgstr "Скрыть этот термин? Вы сможете восстановить его в настройках."
+
+#: templates/common/word_list.html:162 templates/common/word_list.html:178
+msgid "Error:"
+msgstr "Ошибка:"
+
+#: templates/common/word_list.html:162
+msgid "Failed to hide term"
+msgstr "Не удалось скрыть термин"
+
+#: templates/common/word_list.html:169
+msgid "Restore this term? It will reappear in your vocabulary."
+msgstr "Восстановить этот термин? Он снова появится в вашем словаре."
+
+#: templates/common/word_list.html:178
+msgid "Failed to restore term"
+msgstr "Не удалось восстановить термин"
+
+#: templates/common/add_custom_word.html:4
+#: templates/common/add_custom_word.html:12
+#: templates/common/add_custom_word.html:39
+msgid "Add My Term"
+msgstr "Добавить мой термин"
+
+#: templates/common/add_custom_word.html:13
+msgid "Saved to your personal vocabulary only."
+msgstr "Сохраняется только в вашем личном словаре."
+
+#: templates/common/add_custom_word.html:42
+msgid "Cancel"
+msgstr "Отмена"
+
+# ========== НОВЫЕ ФРАЗЫ (ВИДЕОТЕКА) ==========
+
+#: templates/videos/detail.html:8
+msgid "Back to list"
+msgstr "Назад к списку"
+
+#: templates/videos/detail.html:15
+msgid "Speaker:"
+msgstr "Спикер:"
+
+#: templates/videos/detail.html:36
+msgid "Description"
+msgstr "Описание"
+
+#: templates/videos/detail.html:47
+msgid "Words from video"
+msgstr "Слова из видео"
+
+#: templates/videos/detail.html:57
+msgid "Add all words to my vocabulary"
+msgstr "Добавить все слова в мой словарь"
+
+#: templates/videos/detail.html:61
+msgid "Premium users can add words from videos to their vocabulary for learning."
+msgstr "Premium пользователи могут добавлять слова из видео в свой словарь для изучения."
+
+#: templates/videos/detail.html:63 templates/videos/premium_modal.html:3
+msgid "Learn more"
+msgstr "Узнать больше"
+
+#: templates/videos/list.html:10
+msgid "Watch videos and shadow the speakers"
+msgstr "Смотрите видео и повторяйте за спикерами"
+
+#: templates/videos/list.html:18
+msgid "Filter by level:"
+msgstr "Фильтр по уровню:"
+
+#: templates/videos/list.html:21
+msgid "All levels"
+msgstr "Все уровни"
+
+#: templates/videos/list.html:24
+msgid "Beginner"
+msgstr "Начинающий"
+
+#: templates/videos/list.html:27
+msgid "Intermediate"
+msgstr "Средний"
+
+#: templates/videos/list.html:30
+msgid "Advanced"
+msgstr "Продвинутый"
+
+#: templates/videos/list.html:37
+msgid "Get Premium subscription to filter videos by level and add words from videos to your vocabulary!"
+msgstr "Оформите Premium подписку, чтобы фильтровать видео по уровню и добавлять слова из видео в свой словарь!"
+
+#: templates/videos/list.html:60
+msgid "Video"
+msgstr "Видео"
+
+#: templates/videos/list.html:64
+msgid "Watch"
+msgstr "Смотреть"
+
+#: templates/videos/list.html:70
+msgid "No videos found."
+msgstr "Видео не найдены."
+
+#: templates/premium/info.html:4 templates/premium/info.html:10
+msgid "Premium subscription"
+msgstr "Premium подписка"
+
+#: templates/premium/info.html:11
+msgid "Detailed information about Premium subscription"
+msgstr "Подробная информация о Premium подписке"
+
+#: templates/premium/info.html:12
+msgid "Information about plans, benefits, and payment methods will be here."
+msgstr "Здесь будет информация о тарифах, преимуществах и способах оплаты."
+
+#: templates/premium/info.html:14
+msgid "Back to My Vocabulary"
+msgstr "Вернуться в мой словарь"
+
+#: templates/videos/premium_modal.html:11
+msgid "Premium Access"
+msgstr "Premium Доступ"
+
+#: templates/videos/premium_modal.html:12
+msgid "Enhance your learning experience!"
+msgstr "Расширьте возможности обучения!"
+
+#: templates/videos/premium_modal.html:16
+msgid "What does Premium subscription offer?"
+msgstr "Что даёт Premium подписка?"
+
+#: templates/videos/premium_modal.html:18
+msgid "Add words"
+msgstr "Добавление слов"
+
+#: templates/videos/premium_modal.html:18
+msgid "from videos to your vocabulary"
+msgstr "из видео в ваш словарь"
+
+#: templates/videos/premium_modal.html:19
+msgid "Filter videos"
+msgstr "Фильтрация видео"
+
+#: templates/videos/premium_modal.html:19
+msgid "by difficulty level"
+msgstr "по уровню сложности"
+
+#: templates/videos/premium_modal.html:20
+msgid "Create custom words"
+msgstr "Создание своих слов"
+
+#: templates/videos/premium_modal.html:20
+msgid "with AI-generated images"
+msgstr "с изображениями через ИИ"
+
+#: templates/videos/premium_modal.html:21
+msgid "Detailed statistics"
+msgstr "Детальная статистика"
+
+#: templates/videos/premium_modal.html:21
+msgid "of pronunciation"
+msgstr "произношения"
+
+#: templates/videos/premium_modal.html:22
+msgid "Unlimited access"
+msgstr "Неограниченный доступ"
+
+#: templates/videos/premium_modal.html:22
+msgid "to all features"
+msgstr "ко всем функциям"
+
+#: templates/videos/premium_modal.html:26
+msgid "Special offer!"
+msgstr "Специальное предложение!"
+
+#: templates/videos/premium_modal.html:27
+msgid "First month of Premium only"
+msgstr "Первый месяц Premium всего"
+
+#: templates/videos/premium_modal.html:27
+msgid "instead of 499₽"
+msgstr "вместо 499₽"
+
+#: templates/videos/premium_modal.html:32
+msgid "Get Premium"
+msgstr "Оформить Premium"
+
+#: templates/videos/premium_modal.html:35
+msgid "Later"
+msgstr "Попозже"
+
+#: templates/registration/login.html:10
+msgid "Login to account"
+msgstr "Вход в аккаунт"
+
+#: templates/registration/login.html:11
+msgid "Log in to continue learning"
+msgstr "Войдите, чтобы продолжить обучение"
+
+#: templates/registration/login.html:18 templates/registration/register.html:18
+msgid "Username"
+msgstr "Имя пользователя"
+
+#: templates/registration/login.html:19
+msgid "Enter username"
+msgstr "Введите username"
+
+#: templates/registration/login.html:23
+msgid "Password"
+msgstr "Пароль"
+
+#: templates/registration/login.html:24
+msgid "Enter password"
+msgstr "Введите пароль"
+
+#: templates/registration/login.html:29
+msgid "Invalid username or password. Please try again."
+msgstr "Неверное имя пользователя или пароль. Попробуйте снова."
+
+#: templates/registration/login.html:41
+msgid "Don't have an account?"
+msgstr "Нет аккаунта?"
+
+#: templates/registration/register.html:10
+msgid "Registration"
+msgstr "Регистрация"
+
+#: templates/registration/register.html:11
+msgid "Create an account to start learning"
+msgstr "Создайте аккаунт для начала обучения"
+
+#: templates/registration/register.html:51
+msgid "Already have an account?"
+msgstr "Уже есть аккаунт?"
+
+#: templates/registration/register.html:22
+msgid "Email"
+msgstr "Электронная почта"
+
+#: templates/registration/register.html:23
+msgid "Enter email"
+msgstr "Введите email"
+
+#: templates/registration/register.html:37
+msgid "Confirm password"
+msgstr "Подтвердите пароль"

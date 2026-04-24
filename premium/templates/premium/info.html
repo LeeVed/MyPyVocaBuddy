@@ -1,0 +1,53 @@
+{% extends "common/base.html" %}
+
+{% block title %}Premium подписка{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 text-center py-5">
+        <div class="premium-icon-animation mb-3">
+            <span style="font-size: 5rem; display: inline-block;">⭐</span>
+        </div>
+        <h1 class="text-warning fw-bold">Premium подписка</h1>
+        <p class="lead">Расширьте возможности обучения!</p>
+
+        <div class="card shadow-sm mt-4">
+            <div class="card-body text-start">
+                <h5>🚀 Что даёт Premium?</h5>
+                <ul class="list-unstyled mt-3">
+                    <li class="mb-2">✅ <strong>Добавление слов</strong> из видео в ваш словарь</li>
+                    <li class="mb-2">✅ <strong>Фильтрация видео</strong> по уровню сложности</li>
+                    <li class="mb-2">✅ <strong>Создание своих слов</strong> с изображениями через ИИ</li>
+                    <li class="mb-2">✅ <strong>Детальная статистика</strong> произношения</li>
+                    <li class="mb-2">✅ <strong>Неограниченный доступ</strong> ко всем функциям</li>
+                </ul>
+                
+                <div class="alert alert-success text-center mt-3">
+                    <span class="fs-4">🎉 Специальное предложение!</span><br>
+                    Первый месяц Premium всего <strong>199₽</strong> вместо 499₽
+                </div>
+            </div>
+        </div>
+
+        <div class="d-grid gap-2 mt-4">
+            <button class="btn btn-warning btn-lg fw-bold" onclick="alert('Демо-режим: оплата пока не подключена')">
+                ⭐ Оформить Premium
+            </button>
+            <a href="{% url 'common:dashboard' %}" class="btn btn-outline-secondary">
+                📖 Вернуться в мой словарь
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+    @keyframes premiumBounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+    }
+    
+    .premium-icon-animation {
+        animation: premiumBounce 0.5s ease-in-out;
+    }
+</style>
+{% endblock %}
